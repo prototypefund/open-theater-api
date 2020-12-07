@@ -41,13 +41,13 @@ Example:
   { "ssid": "private.open.theater", 
     "pw": "testpassword1234",
     "serveruri": "http://192.168.178.38:8080/mockserver/example-repo/services.json"
-  },
+  }
   {
     "serveruri": "http://192.168.178.38:8080/mockserver/example-repo/services.json"
-  },
+  }
   {
     "serveruri": "https://www.open-theater.de/example-repo/services.json"
-  },
+  }
 ]
 ```
 
