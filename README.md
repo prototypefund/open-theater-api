@@ -33,7 +33,9 @@ This document currently is unfinished and not yet in a usable but in an experime
 
 #### Repo List
 The Repo List is a optional List of repository definitions. It MAY be used to give clients a list of repositories to choose from automatically or via user interaction.
+
 If used, the order of repository endpoint definitions in the repository list MUST be in the order of priority of the given repository endpoints. In case of an automatic choice by the client, the client MUST try to connect to the repositories in the order they are listed in.
+
 This way it can for example be ensured that clients first try local wifi networks before they switch to wide area networks.
 
 Example:
@@ -56,7 +58,9 @@ Example:
 Defines a repository endpoint within a RepoList.
 
 MUST provide parameter `serveruri` containing a String with a valid <a href="https://tools.ietf.org/html/rfc3986">URI</a>
+
 MAY provive parameter `ssid` containting a String defining a wifi ssid if the serveruri MUST be connected in a local area network only
+
 MAY provice parameter `password` containg a String IF parameter `ssid` is present to give access to password protected local wireless networks
 
 The client MUST use the SSID and PASSWORD if provided and MUST NOT use the SERVERURI via a different uplink. 
