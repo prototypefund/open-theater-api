@@ -53,7 +53,7 @@ Example:
 ]
 ```
 
-#### Repository Defintion 
+#### Repository Definition 
 
 Defines a <a href="#repository">repository</a> endpoint within a <a href="#repo-list">RepoList</a>.
 
