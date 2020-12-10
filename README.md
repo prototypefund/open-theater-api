@@ -97,17 +97,17 @@ MAY provide parameter `projectLabel` containting a list of human readable string
 #### Channel
 A channel describes a single media translation of its given parent <a href="#project">project</a>.
 
-MUST provide parameter `channelId` containting a String that is unique within the namespace of its parent <a href="#project">project</a>. clients MUST use the channelId as last directory in the filepath defined by the parents project `projectPath` to cache/save asset media files when provisioning.
+MUST provide parameter `channelId` containting a String that is unique within the namespace of its parent <a href="#project">project</a>. clients MUST use the channelId as last directory in the filepath defined by the parents project `projectPath` to cache/save asset media files when provisioning. client MAY use the channelId as human readable identifier IF `label` is not present.
 
 MUST provide parameter `triggerUri` containing a String with a valid <a href="https://tools.ietf.org/html/rfc3986">URI</a> to an Open Theater <a href="#trigger-api-endpoint">trigger API endpoint</a>.
 
 MAY provide parameter `provisioningUri` containing a String with a valid <a href="https://tools.ietf.org/html/rfc3986">URI</a> to an Open Theater <a href="#provisioning-endpoint">provisioning endpoint</a> if files need to be cached before entering the <a href="#trigger-api">trigger API</a>.
 
-MAY provide parameter `channelType` containing a String describing predefined channel content types as `text`,  `video`, `audio` **(to be defined)**. This parameter is to be used for clientside styling and/or UX purposes.
+MAY provide parameter `channelTypes` containing an Array of strings describing predefined channel content types as `text`,  `video`, `audio` **(to be defined)**. This parameter is to be used for clientside styling and/or UX purposes as well as for automatic detection clientside to which renderer or renderer configuration might be used.
 
-MAY provide parameter `label`containting a String describing the content of the channel in human readable form. Clients SHOULD display the label for users if provided. **(todo: needs character limit recommendations)**
+MAY provide parameter `label`containting a String describing the content of the channel in human readable form. Clients SHOULD display the label for users if provided and prefer it over channelId. **(todo: needs character limit recommendations)**
 
-MAY provide parameter `renderer` containing a String identifying the needed renderer for the client IF no standard renderer can be used to display this channels content. IF so this channel's `provisioningUri` endpoints MUST list and deliver the necessary renderer. Clients MAY forbid to download renderers and ignore channels that require custom `renderers`. `renderer` defaults clientside to a defaultRenderer which can display all default `channelType`s (for more about channelTypes and renderers: see <a href="#trigger-api">Trigger API</a>)
+MAY provide parameter `renderer` containing a String identifying the needed renderer for the client IF no standard renderer can be used to display this channels content. IF so this channel's `provisioningUri` endpoints MUST list and deliver the necessary renderer. Clients MAY forbid to download renderers and ignore channels that require custom `renderers`. `renderer` defaults clientside to a defaultRenderer which can display all default `channelTypes` (for more about channelTypes and renderers: see <a href="#trigger-api">Trigger API</a>)
 
 MAY provide a parameter `lastmodified` containing an integer timestamp **(todo: reference standard)** marking the last time any asset inside of the `provisioningUri`s <a href="#fileList">fileList</a> was modified. `lastmodified` MUST only be present IF a `provisioningUri` is provided. IF `lastmodified`is provided a repository's server MUST keep it up to date. RECOMMENDED update timeframe is every 15 minutes. 
 Clients MAY use channel.lastmodified to compare with their cached <a href="#fileList">fileList</a> for human readablility and UX (e.g. to signal that a channels ressources have been downloaded before and seem up to date) but they MUST NOT use it automatically to skip any checks with the provisioning endpoint of a given channel before entering the trigger API.
