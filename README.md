@@ -13,8 +13,8 @@ via:
 
 The API proposals are split into 2 main sections:
 
-1) *Provisioning API* - defining how a repository server, provsioning server and clients communicate and how clients and servers reference cached media Assets in their filesystems
-2) *Trigger API* - defining how a trigger server forwards triggers/cues to clients to display/play text, video and/or video on client devices.
+1) <a href="#provisioning-api">*Provisioning API*</a> - defining how a repository server, provsioning server and clients communicate and how clients and servers reference cached media Assets in their filesystems
+2) <a href="#trigger-api">*Trigger API*</a> - defining how a trigger server forwards triggers/cues to clients to display/play text, video and/or video on client devices.
 
 In the future there might be additional APIs added. In discussion are (amongst others): 
 - Renderer Plugin API
@@ -32,9 +32,9 @@ This document currently is unfinished and not yet in a usable but in an experime
 ### Terminology
 
 #### Repo List
-The Repo List is a optional List of repository definitions. It MAY be used to give clients a list of repositories to choose from automatically or via user interaction.
+The Repo List is a optional List of <a href="#repository-definition">repository definitions</a>. It MAY be used to give clients a list of <a href="#repository">repositories</a> to choose from automatically or via user interaction.
 
-If used, the order of repository endpoint definitions in the repository list MUST be in the order of priority of the given repository endpoints. In case of an automatic choice by the client, the client MUST try to connect to the repositories in the order they are listed in.
+If used, the order of repository definitions in the repository list MUST be in the order of priority of the given repository endpoints. In case of an automatic choice by the client, the client MUST try to connect to the repositories in the order they are listed in.
 
 This way it can for example be ensured that clients first try local wifi networks before they switch to wide area networks.
 
@@ -42,20 +42,20 @@ Example:
 ```json
   { "ssid": "private.open.theater", 
     "pw": "testpassword1234",
-    "serveruri": "http://192.168.178.38:8080/mockserver/example-repo/services.json"
+    "serveruri": "http://192.168.178.38:8080/mockserver/example-repo/projectList.json"
   }
   {
-    "serveruri": "http://192.168.178.38:8080/mockserver/example-repo/services.json"
+    "serveruri": "http://192.168.178.38:8080/mockserver/example-repo/projectList.json"
   }
   {
-    "serveruri": "https://www.open-theater.de/example-repo/services.json"
+    "serveruri": "https://www.open-theater.de/example-repo/projectList.json"
   }
 ]
 ```
 
-#### Repository Endpoint Defintion 
+#### Repository Defintion 
 
-Defines a repository endpoint within a RepoList.
+Defines a <a href="#repository">repository</a> endpoint within a <a href="#repo-list">RepoList</a>.
 
 MUST provide parameter `serveruri` containing a String with a valid <a href="https://tools.ietf.org/html/rfc3986">URI</a>
 
@@ -70,29 +70,29 @@ Example:
 ```json
 { "ssid": "private.open.theater", 
 "pw": "testpassword1234",
-"serveruri": "http://192.168.178.38:8080/mockserver/example-repo/services.json"
+"serveruri": "http://192.168.178.38:8080/mockserver/example-repo/projectList.json"
 }
 
 ```
 
 #### Repository
-A repository (or repo) is a data store that hosts a collection of available <a href="#Project">projects</a> and exposes those via a <a href="#Project List">project list</a>
+A repository (or repo) is a data store that hosts a collection of available <a href="#project">projects</a> and exposes those via a <a href="#project-list">project list</a>
 
 Repositories MAY pull and compile data from other repositories, IF the owners of those repositories allow it. **(still to be defined how)**.
 
 #### Project List
-The project list is a text file exposed by a repository to clients, listing all projects the reposiotory provides and manages.
-It MUST be exposed as `./projectList.json` on a repository's webservers root URL.
+The project list is a text file exposed by a <a href="#repository">repository</a> to clients, listing all <a href="#project">projects</a> the repository provides and/or manages.
+It MUST be exposed as `./projectList.json` on a repository's webserver base URL.
 
 #### Project
-A Project describes and references a real life event (for example a theater show) that provides channels to different media translations.
+A Project describes and references a real life event (for example a theater show) that provides <a href="#channel">channels</a> to different media translations.
 
-MUST provide parameter `projectPath` which is a list of Strings, describing the path of the project as it SHOULD be displayed by the client to users. Clients MAY hide or show certain layers of the projectPath depending on filters, UX philosophy etc. `projectPath` also describes the path that projects assets downloaded via the provisioning API MUST use within the clients filesystem. Clients MAY prepend to the path to add client specific root directories.
+MUST provide parameter `projectPath` which is a list of strings, describing the path of the project as it SHOULD be displayed by the client to users. Clients MAY hide or show certain layers of the projectPath depending on filters, UX philosophy etc. `projectPath` also describes the path that projects assets downloaded via the provisioning API MUST use within the clients filesystem. Clients MAY prepend to the path to add client specific root directories.
 
 MUST provide parameter `channelList` which is a list of channel objects.
 
 #### Channel
-A channel describes a single media translation of its given parent project.
+A channel describes a single media translation of its given parent <a href="#project">project</a>.
 
 MUST provide parameter `triggerUri` containing a String with a valid <a href="https://tools.ietf.org/html/rfc3986">URI</a> do a Open Theater triggerAPI endpoint
 
