@@ -59,11 +59,11 @@ Defines a repository endpoint within a RepoList.
 
 MUST provide parameter `serveruri` containing a String with a valid <a href="https://tools.ietf.org/html/rfc3986">URI</a>
 
-MAY provive parameter `ssid` containting a String defining a wifi ssid if the serveruri MUST be connected in a local area network only
+MAY provive parameter `ssid` containing a String defining a wifi ssid if the serveruri MUST be connected in a local area network only
 
-MAY provice parameter `password` containg a String IF parameter `ssid` is present to give access to password protected local wireless networks
+MAY provide parameter `password` containing a String IF parameter `ssid` is present to give access to password protected local wireless networks
 
-The client MUST use the SSID and PASSWORD if provided and MUST NOT use the SERVERURI via a different uplink. 
+The client MUST use the SSID and PASSWORD if provided and MUST NOT use the SERVERURI via a different uplink.
 If the client should connect to the same SERVERURI via another uplink in case the wifi connection fails, the repo list MUST provide another repository endpoint definition including the SERVERURI without SSID
 
 Example:
@@ -76,11 +76,27 @@ Example:
 ```
 
 #### Repository
-A repository (or repo) is a data store that hosts a collection of available <a href="#Project">Projects</a> and exposes those via a <a href="#Project-List">Project List</a>
+A repository (or repo) is a data store that hosts a collection of available <a href="#Project">projects</a> and exposes those via a <a href="#Project List">project list</a>
+
+Repositories MAY pull and compile data from other repositories, IF the owners of those repositories allow it. **(still to be defined how)**.
 
 #### Project List
-The project list is a text file exposed by a repository to clients, listing all projects the reposiotory provides and manages. 
+The project list is a text file exposed by a repository to clients, listing all projects the reposiotory provides and manages.
 It MUST be exposed as `./projectList.json` on a repository's webservers root URL.
 
 #### Project
-A Project describes and references an Event that provides Channels to
+A Project describes and references a real life event (for example a theater show) that provides channels to different media translations.
+
+MUST provide parameter `projectPath` which is a list of Strings, describing the path of the project as it SHOULD be displayed by the client to users. Clients MAY hide or show certain layers of the projectPath depending on filters, UX philosophy etc. `projectPath` also describes the path that projects assets downloaded via the provisioning API MUST use within the clients filesystem. Clients MAY prepend to the path to add client specific root directories.
+
+MUST provide parameter `channelList` which is a list of channel objects.
+
+#### Channel
+A channel describes a single media translation of its given parent project.
+
+MUST provide parameter `triggerUri` containing a String with a valid <a href="https://tools.ietf.org/html/rfc3986">URI</a> do a Open Theater triggerAPI endpoint
+
+MAY provice parameter `channelType` containing a String describing predefined channel content types as `text`,  `video`, `audio` **(to be defined)**. This parameter is to be used for clientside styling and/or UX purposes.
+
+<!-- CONTINUE HERE -->
+
