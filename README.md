@@ -1,6 +1,6 @@
 # Open-Theater-API
 
-API based on socket.io to send & trigger live subtitles/translations for theater and live performance applications to mobile devices in the audience to bridge language barriers.
+API based on socket.io and HTTP to send, provision & trigger live subtitles/translations for theater and live performance applications to mobile devices in the audience to bridge language barriers.
 
 Translations can be in form of text, video or audio snippets.
 
@@ -24,6 +24,18 @@ In the future there might be additional APIs added. In discussion are (amongst o
 This document currently is unfinished and not yet in a usable but in an experimental state.
 
 <a href="https://tools.ietf.org/html/rfc2119">RF 2119</a> *is planned* to be used in the first published version of this document.
+
+
+## Agents of API processes
+
+#### Client
+A client. Usually an application running on one single user's device (mobile phone, laptop etc.).
+
+#### Repository Server
+A server hosting an overview over several projects that MAY recide on different servers (provisioning servers and/or trigger servers).
+
+#### Provisioning Server
+A server hosting one or more project and channel specific provisioning endpoints and/or their fileLists and/or their associated asset files to be downloaded and chached by clients in the provisioning process.
 
 
 
@@ -91,6 +103,8 @@ MUST provide parameter `projectPath` which is a list of path compatible machine 
 
 MUST provide parameter `channelList` which is a list of channel objects.
 
+MUST provide parameter `triggerUri` containing a String with a valid <a href="https://tools.ietf.org/html/rfc3986">URI</a> to an Open Theater <a href="#trigger-api-endpoint">trigger API endpoint</a>.
+
 MAY provide parameter `projectLabel` containting a list of human readable strings which MUST have the same length as `projectPath`. The strings inside projectLabel can contain UTF-8 compatible characters that are not allowed inside of `projectPath`. Clients SHOULD map the items from `projectLabel` to items of `projectPath` and preferably display the `projectLabel` Strings to users.
 (this way we can display directory structures with spaces and emojis etc if needed).
 
@@ -99,7 +113,7 @@ A channel describes a single media translation of its given parent <a href="#pro
 
 MUST provide parameter `channelId` containting a String that is unique within the namespace of its parent <a href="#project">project</a>. clients MUST use the channelId as last directory in the filepath defined by the parents project `projectPath` to cache/save asset media files when provisioning. client MAY use the channelId as human readable identifier IF `label` is not present.
 
-MUST provide parameter `triggerUri` containing a String with a valid <a href="https://tools.ietf.org/html/rfc3986">URI</a> to an Open Theater <a href="#trigger-api-endpoint">trigger API endpoint</a>.
+MAY provide parameter `triggerUri` containing a String with a valid <a href="https://tools.ietf.org/html/rfc3986">URI</a> to an Open Theater <a href="#trigger-api-endpoint">trigger API endpoint</a> that CAN overwrite the parent project level `triggerUri` (for example to have slimmer data packets per cue). This CAN be used by a client but a client MAY also choose to default to the more verbose project's `triggerUri`. We RECOMMEND using this only in projects with excessive data being send over a high number of channels and otherwise omit this `triggerUri`.
 
 MAY provide parameter `provisioningUri` containing a String with a valid <a href="https://tools.ietf.org/html/rfc3986">URI</a> to an Open Theater <a href="#provisioning-endpoint">provisioning endpoint</a> if files need to be cached before entering the <a href="#trigger-api">trigger API</a>.
 
@@ -112,5 +126,73 @@ MAY provide parameter `renderer` containing a String identifying the needed rend
 MAY provide a parameter `lastmodified` containing an integer timestamp **(todo: reference standard)** marking the last time any asset inside of the `provisioningUri`s <a href="#fileList">fileList</a> was modified. `lastmodified` MUST only be present IF a `provisioningUri` is provided. IF `lastmodified`is provided a repository's server MUST keep it up to date. RECOMMENDED update timeframe is every 15 minutes. 
 Clients MAY use channel.lastmodified to compare with their cached <a href="#fileList">fileList</a> for human readablility and UX (e.g. to signal that a channels ressources have been downloaded before and seem up to date) but they MUST NOT use it automatically to skip any checks with the provisioning endpoint of a given channel before entering the trigger API.
 
+#### File List
+A JSON file hosted on a provisioning server and within a client's filesystem for each channel cached.
+
+MUST be called `FileList.json`.
+
+MUST be served at root level relative to it's <a href="#channel">channel's</a> `provisioningUri` IF on provisioning servers.
+
+MUST be saved at root level relative to it's channel's cached file location IF on client filesystem.
+
+MUST provide parameter `files`, containing a list of objects with <a href="#file-definition">File Definitions</a>.
+
+Example:
+```json
+{
+    "files":[
+        { "filepath": "1.mp4", "filesize": 12, "lastmodified": 16037178357021 },
+        { "filepath": "2.mp4", "filesize": 64, "lastmodified": 16037178356002 },
+        { "filepath": "3.mp4", "filesize": 64, "lastmodified": 16037178356002 },
+        { "filepath": "4.mp4", "filesize": 64, "lastmodified": 16037178357004 }
+    ]
+}
+
+```
+
+#### File Definition
+Part of <a href="#file-list">file list</a>. Describes one asset file for caching in the provisioning API.
+
+MUST provide parameter `filepath` containing a URI path compatible string, describing EITHER the relative position of an asset file to the fileList's own location (defined by the `provisioningUri` of it's parent channel) OR an absolute position defined by the URI.
+
+MUST provide parameter `lastmodified` containting an integer value describing a timestamp in <a href="https://en.wikipedia.org/wiki/Unix_time">Unix Time</a>.
+
+SHOULD provide parameter `filesize`, containting an integer value describing the file's size in bytes.
+
+Provisioning servers MUST make sure that the listed filepaths are accessible by clients when listed. We RECOMMEND to test regularly and automated all listed filepaths.
+
+Example:
+```json
+{ "filepath": "1.mp4", "filesize": 12, "lastmodified": 16037178357021 }
+
+```
+
 <!-- CONTINUE HERE -->
+
+### Data flow of provisioning process
+
+Clients MUST follow the following steps in order:
+
+1. On boot: Client opens <a href="#repo-list">Repo List</a> and works through the <a href="#repository-definition">Repository Definitions</a> in order of their listing following the rules of the specifications. (IF ssid/pw present: use local wifi, else use WAN etc.). Client uses the response data from the first successful connection to a listed repositoriy server <a href="#project-list">project list</a>.
+
+2. Client presents all relevant projects and their channels from the project list to users. Client MAY apply filters based on their capabilities (e.g. custom renderers) and configurations (e.g. user choices). Client CAN choose the styling and order it presents the contents to the user, but MUST follow the specifications of <a href="#project">project</a> and <a href="#channel">channel</a> (`label`over `channelId`, etc. etc.).
+
+3. Client / User chooses one or more channels from the project list.
+
+4. Client connects via HTTP GET request to the provisioning endpoint's `/fileList.json` of each chosen channel
+
+5. Client uses the <a href="#file-list">file List</a> to compare ALL files listed on the channels provisioning endpoint with ALL files cached inside the client's filesystem by using the locally cached fileList
+
+6. Client downloads ALL files that are not up to date with the files chached and updates it's channel specific local fileList accordingly.
+
+7. Client waits until ALL updates and downloads of AT LEAST one channel are finished
+
+8. Client provides user possiblity to access a project's trigger API and it's user interface. (e.g. via button press). Client MUST have ensured that Step 7 has been finished for the project before letting users access the trigger client.
+
+9. Client hands over all information about the project chosen to the trigger client.
+
+
+<!-- CONTINUE HERE -->
+
 <img src="https://open-theater.de/wp-content/uploads/2020/12/OpenTheater-API-Flow-und-Visual-Doku-1.jpg" alt="flowchart of provisioning uri with comments"></img>
+
