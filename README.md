@@ -228,21 +228,21 @@ SHOULD provide parameter `timestamp` containting an integer value describing a t
 Example:
 ```json
 {
-  timestamp:123445667778,
-  content:{
+  "timestamp":123445667778,
+  "content":{
 
-    text_de:`das ist deutsch  ${count}`,
+    "text_de":"das ist deutsch  ${count}",
 
-    text_en:`this is english  ${count}`,
+    "text_en":"this is english  ${count}",
 
-    html_doesnotexist: "test",
+    "html_doesnotexist": "test",
 
-    video_de: "assets/test.mp4",
+    "video_de": "assets/test.mp4",
 
-    image_de: "https://picsum.photos/300/300"
+    "image_de": "https://picsum.photos/300/300"
 
   },
-  styles: {
+  "styles": {
       "#text_de": {
         "classes": [],
         "inline": {
