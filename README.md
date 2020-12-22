@@ -219,7 +219,7 @@ MAY switch to <a href="#custom-renderer">custom renderers</a> IF trigger payload
 
 A JSON formatted payload describing the contents to be displayed and/or played within a client's <a>show interface's</a> <a href="#renderer">renderers</a>.
 
-MUST provide parameter `content` containing a <a href="#content-object">content-object</a> of <a href="#content>contents</a> of each <a href="#channel">channel</a>, describing the unstyled changes of content on receiving of this trigger payload.
+MUST provide parameter `content` containing a <a href="#content-object">content-object</a> of <a href="#content">contents</a> of each <a href="#channel">channel</a>, describing the unstyled changes of content on receiving of this trigger payload.
 
 MAY provide parameter `styles` containing a <a href="#styles-object">styles-object</a>, describing the styling changes valid on receiving this trigger payload.
 
