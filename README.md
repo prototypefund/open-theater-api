@@ -37,9 +37,12 @@ A server hosting an overview over several projects that MAY recide on different 
 #### Provisioning Server
 A server hosting one or more project and channel specific provisioning endpoints and/or their fileLists and/or their associated asset files to be downloaded and chached by clients in the provisioning process.
 
-
+#### Trigger Server
+A server hosting one or more project and/or channel specific trigger endpoints. Delivers real time trigger payloads to clients that are subscribed to its endpoints.
 
 ## Provisioning API
+
+status: test ready
 
 ### Terminology
 
@@ -192,7 +195,71 @@ Clients MUST follow the following steps in order:
 9. Client hands over all information about the project chosen to the trigger client.
 
 
-<!-- CONTINUE HERE -->
+<!-- TODO: add more details over decision trees in the flow here. -->
 
 <img src="https://open-theater.de/wp-content/uploads/2020/12/OpenTheater-API-Flow-und-Visual-Doku-1.jpg" alt="flowchart of provisioning uri with comments"></img>
+
+
+
+## Trigger API
+
+status: pre-alpha
+
+### Terminology
+
+#### Show Interface
+
+A User Interface provided by a client to display and/or play contents described in <a href="#trigger-payload">a trigger playload</a>. 
+
+MUST include at least one <a href="#renderer">renderer</a> to present contents to users. At least one renderer MUST serve as the <a href="#default-renderer>default renderer</a>.
+
+MAY switch to <a href="#custom-renderer">custom renderers</a> IF trigger payload, <a href="project">project</a> and/or client configuration allow.
+
+#### Trigger Payload
+
+A JSON formatted payload describing the contents to be displayed and/or played within a client's <a>show interface's</a> <a href="#renderer">renderers</a>.
+
+MUST provide parameter `content` containing a <a href="#content-object">content-object</a> of <a href="#content>contents</a> of each <a href="#channel">channel</a>, describing the unstyled changes of content on receiving of this trigger payload.
+
+MAY provide parameter `styles` containing a <a href="#styles-object">styles-object</a>, describing the styling changes valid on receiving this trigger payload.
+
+SHOULD provide parameter `timestamp` containting an integer value describing a timestamp in <a href="https://en.wikipedia.org/wiki/Unix_time">Unix Time</a> indicating the time this payload was sent by a <a href="#cue-generator">cue-generator</a>
+
+Example:
+```json
+{
+  timestamp:123445667778,
+  content:{
+
+    text_de:`das ist deutsch  ${count}`,
+
+    text_en:`this is english  ${count}`,
+
+    html_doesnotexist: "test",
+
+    video_de: "assets/test.mp4",
+
+    image_de: "https://picsum.photos/300/300"
+
+  },
+  styles: {
+      "#text_de": {
+        "classes": [],
+        "inline": {
+          "backgroundColor": "yellow",
+          "border": "4px solid red"
+        },
+        "transitions": {
+          "fadeInClass": "animate__fadeIn",
+          "fadeInTime": 100,
+          "fadeInDelay": 100,
+          "fadeOutClass": "animate__fadeOut",
+          "fadeOutTime": 100,
+          "fadeOutDelay": 100
+        }
+    }
+  }
+}
+```
+
 
