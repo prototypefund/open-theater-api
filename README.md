@@ -199,7 +199,9 @@ Clients MUST follow the following steps in order:
 
 <img src="https://open-theater.de/wp-content/uploads/2020/12/OpenTheater-API-Flow-und-Visual-Doku-1.jpg" alt="flowchart of provisioning uri with comments"></img>
 
+### Provisioning API Notes
 
+- channels MAY have their own Trigger endpoints, only listing content and style changes for one channel, but every project MUST have a verbose trigger endpoint including ALL trigger payloads for ALL channels
 
 ## Trigger API
 
@@ -219,7 +221,9 @@ MAY switch to <a href="#custom-renderer">custom renderers</a> IF trigger payload
 
 A JSON formatted payload describing the contents to be displayed and/or played within a client's <a>show interface's</a> <a href="#renderer">renderers</a>.
 
-MUST provide parameter `content` containing a <a href="#content-object">content-object</a> of <a href="#content">contents</a> of each <a href="#channel">channel</a>, describing the unstyled changes of content on receiving of this trigger payload.
+MUST provide at least one of the following parameters `content` and/or `styles`. MAY only describe one of them as changes.
+
+MAY provide parameter `content` containing a <a href="#content-object">content-object</a> of <a href="#content">contents</a> of each <a href="#channel">channel</a>, describing the unstyled changes of content on receiving of this trigger payload.
 
 MAY provide parameter `styles` containing a <a href="#styles-object">styles-object</a>, describing the styling changes valid on receiving this trigger payload.
 
@@ -262,4 +266,35 @@ Example:
 }
 ```
 
+#### Content Object
 
+A content Object is part of a <a href="#trigger-payload">trigger payload</a> and describes the content changes of one trigger cue. 
+It lists the contents for all channels that MUST change immediately after receiving the parent trigger payload. 
+
+MUST list the changes as key-value pairs, where the key MUST be lead by the name of the renderer the change is affecting and an underscore, followed by  a valid channel name as defined in the provisioning's <a href="#channel">channel definitions</a>. For example `text_german` for the text renderer on channel "german" being affected.
+The value can be whatever data structure is required by the renderer. For all default renderers that will be a string.
+
+Example:
+```
+"content":{
+
+    "text_de":"das ist deutsch  ${count}",
+
+    "text_en":"this is english  ${count}",
+
+    "html_doesnotexist": "test",
+
+    "video_de": "assets/test.mp4",
+
+    "image_de": "https://picsum.photos/300/300"
+
+  },
+```
+
+#### Styles Object
+
+
+
+### Trigger API Notes / Flow
+
+- Because the <a href="#trigger-payload">Trigger Payload</a> describes changes to single channels, it MUST be delivered via TCP based transport protocols or other means to ensure delivery on transport level. If UDP based / one-way transport protocols were used, every trigger payload would have to repeat the state instead of only overwriting. For later versions of this API specification there could be a flag on channels.
