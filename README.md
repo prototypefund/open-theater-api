@@ -129,7 +129,7 @@ Each key MUST be formatted following the format `renderingMediumType_languagelab
 <!--
 **Spec Note**: *this spec might be worth re-examination for later versions of this spec for it seems a little too unintuitive. Yet at the current moment it seems necessary to have flexible renderers*
 
-Might be replaceable by renderingMediumType_channelID ! TODO: check if this would break some logic in the renderer and/or other parts of the spec!
+Might be replaceable automatically by the more human readable channelTypes_channelID ! TODO: check if this would break some logic in the renderer and/or other parts of the spec!
 -->
 
 MAY provide parameter `label`containting a String describing the content of the channel in human readable form. Clients SHOULD display the label for users if provided and prefer it over channelId. **(todo: needs character limit recommendations)**
