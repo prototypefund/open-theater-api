@@ -102,6 +102,8 @@ It MUST be exposed as `./projectList.json` on a repository's webserver base URL.
 #### Project
 A Project describes and references a real life event (for example a theater show) that provides <a href="#channel">channels</a> to different media translations.
 
+MUST provide parameter `projectUUID` which is a string formatted as UUID V4.
+
 MUST provide parameter `projectPath` which is a list of path compatible machine readable strings (no spaces, no special characters, case-insensitive) **(todo: needs reference to standard or define its own clear norm, e.g. URI safe path notation)**, describing the path of the project as it SHOULD be displayed by the client to users. Clients MAY hide or show certain layers of the projectPath depending on filters, UX philosophy etc. `projectPath` also describes the path that projects assets downloaded via the provisioning API MUST use within the clients filesystem. Clients MAY prepend to the path to add client specific root directories.
 
 MUST provide parameter `channelList` which is a list of channel objects.
