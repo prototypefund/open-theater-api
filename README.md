@@ -122,7 +122,15 @@ MAY provide parameter `triggerUri` containing a String with a valid <a href="htt
 
 MAY provide parameter `provisioningUri` containing a String with a valid <a href="https://tools.ietf.org/html/rfc3986">URI</a> to an Open Theater <a href="#provisioning-endpoint">provisioning endpoint</a> if files need to be cached before entering the <a href="#trigger-api">trigger API</a>.
 
-MAY provide parameter `channelTypes` containing an Array of strings describing predefined channel content types as `text`,  `video`, `audio` **(to be defined)**. This parameter is to be used for clientside styling and/or UX purposes as well as for automatic detection clientside to which renderer or renderer configuration might be used.
+<!--MUST provide parameter `channelTypes` containing an Array of strings describing predefined channel content types as `text`,  `video`, `audio` **(to be defined)**. This parameter is to be used for clientside styling and/or UX purposes as well as for automatic detection clientside to which renderer or renderer configuration might be used.-->
+
+MUST provide parameter `keys` containting an Array of strings, each describing the unique id of each content div that the <a href="#renderer">renderer</a> of this channel will have to expect in incoming <a href="#trigger-payload">trigger payloads (cues)</a>.
+Each key MUST be formatted following the format `renderingMediumType_languagelabel`, where `renderingMediumType` should be replaced by the predefined channel content types  `text`,  `video`, `audio`, `image` **(to be defined)** and `languagelabel` should be replaced by the <a href="https://en.wikipedia.org/wiki/ISO_639-1">ISO 639-1 language code</a> (if applicable) or another custom flag identifying this channel. This parameter is to be used for clientside styling and/or UX purposes as well as for automatic detection clientside to which renderer or renderer configuration might be used. It will be used as ID of each div built by the renderer and as the keys identifying distinct  in the trigger API.
+<!--
+**Spec Note**: *this spec might be worth re-examination for later versions of this spec for it seems a little too unintuitive. Yet at the current moment it seems necessary to have flexible renderers*
+
+Might be replaceable by renderingMediumType_channelID ! TODO: check if this would break some logic in the renderer and/or other parts of the spec!
+-->
 
 MAY provide parameter `label`containting a String describing the content of the channel in human readable form. Clients SHOULD display the label for users if provided and prefer it over channelId. **(todo: needs character limit recommendations)**
 
