@@ -104,7 +104,7 @@ It MUST be exposed as `./projectList.json` on a repository's webserver base URL.
 #### Project
 A Project describes and references a real life event (for example a theater show) that provides <a href="#channel">channels</a> to different media translations.
 
-MUST provide parameter `projectUUID` which is a string formatted as UUID V4.
+MUST provide parameter `projectUuid` which is a string formatted as UUID V4.
 
 MUST provide parameter `projectPath` which is a list of path compatible machine readable strings (no spaces, no special characters, case-insensitive) **(todo: needs reference to standard or define its own clear norm, e.g. URI safe path notation)**, describing the path of the project as it SHOULD be displayed by the client to users. Clients MAY hide or show certain layers of the projectPath depending on filters, UX philosophy etc. `projectPath` also describes the path that projects assets downloaded via the provisioning API MUST use within the clients filesystem. Clients MAY prepend to the path to add client specific root directories.
 
@@ -114,6 +114,34 @@ MUST provide parameter `triggerUri` containing a String with a valid <a href="ht
 
 MAY provide parameter `projectLabel` containting a list of human readable strings which MUST have the same length as `projectPath`. The strings inside projectLabel can contain UTF-8 compatible characters that are not allowed inside of `projectPath`. Clients SHOULD map the items from `projectLabel` to items of `projectPath` and preferably display the `projectLabel` Strings to users.
 (this way we can display directory structures with spaces and emojis etc if needed).
+
+Example:
+```json
+{
+    "projectUuid": "ff277516-121b-4304-b256-d5a8b70e136a",
+    "projectPath": [
+      "Staatstheater_Mannheim",
+      "Kammerspiele",
+      "Shakespears_anderes_stück"
+    ],
+    "triggerUri": "https://foo.bar/project2",
+    "channelList": [
+      {
+        "channelUuid": "f6b070fe-0f89-4c1e-8c43-993abd9e851f",
+        "provisioningUri": "https://open-theater.de/example-repo/staatstheater_mannheim/kammerspiele/shakespears_anderes_stueck/DE_UNTERTITEL",
+        "label": "DE Untertitel",
+        "containerIds": ["text_DE"]
+      },
+      {
+        "channelUuid": "5e23407e-1d35-4953-bf17-5e07e11105d4",
+        "provisioningUri": "https://open-theater.de/example-repo/staatstheater_mannheim/kammerspiele/shakespears_anderes_stueck/EN_UNTERTITEL",
+        "label": "EN Subtitles",
+        "containerIds": ["text_EN"]
+      }
+    ]
+}
+
+```
 
 #### Channel
 A channel describes a single media translation of its given parent <a href="#project">project</a>.
