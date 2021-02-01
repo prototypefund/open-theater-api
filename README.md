@@ -167,10 +167,20 @@ Might be replaceable automatically by the more human readable channelTypes_chann
 
 MAY provide field `label`containting a String describing the content of the channel in human readable form. Clients SHOULD display the label for users if provided and prefer it over channelUuid. **(todo: needs character limit recommendations)**
 
-MAY provide field `renderer` containing a String identifying the needed renderer for the client IF no standard renderer can be used to display this channels content. IF so this channel's `provisioningUri` endpoints MUST list and deliver the necessary renderer. Clients MAY forbid to download renderers and ignore channels that require custom `renderers`. `renderer` defaults clientside to a defaultRenderer which can display all default `channelIds` (for more about channelIds and renderers: see <a href="#trigger-api">Trigger API</a>)
+MAY provide field `renderer` containing a String identifying the needed renderer for the client IF no standard renderer can be used to display this channels content. IF so this channel's `provisioningUri` endpoints MUST list and deliver the necessary renderer. Clients MAY forbid to download renderers and ignore channels that require custom `renderers`. `renderer` defaults clientside to a defaultRenderer which can display all default `containerTypes` (for more about containerTypes and renderers: see <a href="#trigger-api">Trigger API</a>)
 
 MAY provide a field `lastmodified` containing an integer timestamp **(todo: reference standard)** marking the last time any asset inside of the `provisioningUri`s <a href="#fileList">fileList</a> was modified. `lastmodified` MUST only be present IF a `provisioningUri` is provided. IF `lastmodified`is provided a repository's server MUST keep it up to date. RECOMMENDED update timeframe is every 15 minutes. 
 Clients MAY use channel.lastmodified to compare with their cached <a href="#fileList">fileList</a> for human readablility and UX (e.g. to signal that a channels ressources have been downloaded before and seem up to date) but they MUST NOT use it automatically to skip any checks with the provisioning endpoint of a given channel before entering the trigger API.
+
+*Example:*
+```json
+{
+  "channelUuid": "f6b070fe-0f89-4c1e-8c43-993abd9e851f",
+  "provisioningUri": "https://open-theater.de/example-repo/staatstheater_mannheim/kammerspiele/shakespears_anderes_stueck/DE_UNTERTITEL/fileList.json",
+  "label": "DE Untertitel",
+  "containerIds": ["text_DE"]
+}
+```
 
 #### File List
 A JSON file hosted on a provisioning server and within a client's filesystem for each channel cached.
@@ -213,13 +223,12 @@ Example:
 
 ```
 
-<!-- CONTINUE HERE -->
 
 ### Data flow of provisioning process
 
 Clients MUST follow the following steps in order:
 
-1. On boot: Client opens <a href="#repo-list">Repo List</a> and works through the <a href="#repository-definition">Repository Definitions</a> in order of their listing following the rules of the specifications. (IF ssid/pw present: use local wifi, else use WAN etc.). Client uses the response data from the first successful connection to a listed repositoriy server <a href="#project-list">project list</a>.
+1. Client opens <a href="#repo-list">Repo List</a> and works through the <a href="#repository-definition">Repository Definitions</a> in order of their listing following the rules of the specifications. (IF ssid/pw present: use local wifi, else use WAN etc.). Client uses the response data from the first successful connection to a listed repositoriy server <a href="#project-list">project list</a>.
 
 2. Client presents all relevant projects and their channels from the project list to users. Client MAY apply filters based on their capabilities (e.g. custom renderers) and configurations (e.g. user choices). Client CAN choose the styling and order it presents the contents to the user, but MUST follow the specifications of <a href="#project">project</a> and <a href="#channel">channel</a> (`label`over `channelUuid`, etc. etc.).
 
@@ -246,9 +255,20 @@ Clients MUST follow the following steps in order:
 
 - channels MAY have their own Trigger endpoints, only listing content and style changes for one channel, but every project MUST have a verbose trigger endpoint including ALL trigger payloads for ALL channels
 
+
+
+
 ## Trigger API
 
-status: pre-alpha
+status: test-ready
+
+The Trigger API organizes incoming trigger payloads and defines which of their contents have to be displayed and how they have to be styled inside of a client.
+
+In general: The client has to hand over user configuration (which channels to provide for which project) to the trigger UI. After receiving the configuration, the trigger UI connects with the specified trigger endpoint(s) and listens to incoming socket.io-events **(in later versions of this API pure websocket connections and/or MQTT could also be implemented)**
+
+An incoming Trigger, defines changes via its payload. That means: The client shows the specified content until
+- a) it reached its end (in the case of audio and video) or
+- b) a new trigger payload overwrites the currently displayed/playing content
 
 ### Terminology
 
@@ -278,9 +298,9 @@ Example:
   "timestamp":123445667778,
   "content":{
 
-    "text_de":"das ist deutsch  ${count}",
+    "text_de":"das ist deutsch",
 
-    "text_en":"this is english  ${count}",
+    "text_en":"this is english",
 
     "html_doesnotexist": "test",
 
@@ -314,16 +334,15 @@ Example:
 A content Object is part of a <a href="#trigger-payload">trigger payload</a> and describes the content changes of one trigger cue. 
 It lists the contents for all channels that MUST change immediately after receiving the parent trigger payload. 
 
-MUST list the changes as key-value pairs, where the key MUST be lead by the name of the renderer the change is affecting and an underscore, followed by  a valid channel name as defined in the provisioning's <a href="#channel">channel definitions</a>. For example `text_german` for the text renderer on channel "german" being affected.
-The value can be whatever data structure is required by the renderer. For all default renderers that will be a string.
+MUST list the changes as key-value pairs, where the key MUST be a valid `containerId` within this channels provisioning defintion.
 
 Example:
-```
+```json
 "content":{
 
-    "text_de":"das ist deutsch  ${count}",
+    "text_de":"das ist deutsch",
 
-    "text_en":"this is english  ${count}",
+    "text_en":"this is english",
 
     "html_doesnotexist": "test",
 
@@ -334,6 +353,40 @@ Example:
   },
 ```
 
+
+#### Track
+A track is the representation of data inside of each field of a content object. It represents ONLY one medium being displayed/played/triggered within the renderer.
+It is usually identified via the `containerId` provided inside of the channel via the channels provisioning parameter <a href="#containerIds">`containerIds`</a> and - on the trigger API - inside of a <a href="#content-object">
+
+One Channel MAY have several tracks in parallel. 
+
+Every track defined in `containerIds` MUST be displayed/played/updated if present in an incoming content object.
+
+*Example*:
+
+```json
+"text_en":"this is english",
+```
+
+#### Container
+A container is the box (most likely an HTML div element) in which a tracks content is rendered.
+
+It must be stylable with <a href="https://developer.mozilla.org/en-US/docs/Web/CSS">CSS</a> by addressing it with `#<containerId>`. So its CSS ID MUST be same as it's containerId.
+
+##### ContainerId
+
+every containerId MUST be a string starting with the name of the renderer the change is affecting (<a href="#containertype">containerType</a>) and an underscore, followed by  a track/language name.
+
+The containerIds used inside of a <a href="trigger-payload">trigger payload</a> MUST be defined before in the provisioning's <a href="#channel">channel definitions</a>. 
+
+*Example:* 
+`text_german` for the text renderer on channel "german" being affected.
+The value can be whatever data structure is required by the renderer. For all default renderers that will be a string.
+
+Inside of the <a href="#style-object">style object</a> containerIds can also be found but MUST be referenced with a leading "#"
+
+
+
 #### Styles Object
 
 
@@ -341,3 +394,4 @@ Example:
 ### Trigger API Notes / Flow
 
 - Because the <a href="#trigger-payload">Trigger Payload</a> describes changes to single channels, it MUST be delivered via TCP based transport protocols or other means to ensure delivery on transport level. If UDP based / one-way transport protocols were used, every trigger payload would have to repeat the state instead of only overwriting. For later versions of this API specification there could be a flag on channels.
+
