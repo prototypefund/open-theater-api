@@ -124,7 +124,7 @@ Example:
 {
     "projectUuid": "ff277516-121b-4304-b256-d5a8b70e136a",
     "projectPath": [
-      "Staatstheater_Mannheim",
+      "Staatstheater_Musterstadt",
       "Kammerspiele",
       "Shakespears_anderes_stück"
     ],
@@ -132,13 +132,13 @@ Example:
     "channelList": [
       {
         "channelUuid": "f6b070fe-0f89-4c1e-8c43-993abd9e851f",
-        "provisioningUri": "https://open-theater.de/example-repo/staatstheater_mannheim/kammerspiele/shakespears_anderes_stueck/DE_UNTERTITEL/fileList.json",
+        "provisioningUri": "https://open-theater.de/example-repo/staatstheater_Musterstadt/kammerspiele/shakespears_anderes_stueck/DE_UNTERTITEL/fileList.json",
         "label": "DE Untertitel",
         "containerIds": ["text_DE"]
       },
       {
         "channelUuid": "5e23407e-1d35-4953-bf17-5e07e11105d4",
-        "provisioningUri": "https://open-theater.de/example-repo/staatstheater_mannheim/kammerspiele/shakespears_anderes_stueck/EN_UNTERTITEL/fileList.json",
+        "provisioningUri": "https://open-theater.de/example-repo/staatstheater_Musterstadt/kammerspiele/shakespears_anderes_stueck/EN_UNTERTITEL/fileList.json",
         "label": "EN Subtitles",
         "containerIds": ["text_EN"]
       }
@@ -177,7 +177,7 @@ Clients MAY use channel.lastmodified to compare with their cached <a href="#file
 ```json
 {
   "channelUuid": "f6b070fe-0f89-4c1e-8c43-993abd9e851f",
-  "provisioningUri": "https://open-theater.de/example-repo/staatstheater_mannheim/kammerspiele/shakespears_anderes_stueck/DE_UNTERTITEL/fileList.json",
+  "provisioningUri": "https://open-theater.de/example-repo/staatstheater_Musterstadt/kammerspiele/shakespears_anderes_stueck/DE_UNTERTITEL/fileList.json",
   "label": "DE Untertitel",
   "containerIds": ["text_DE"]
 }
@@ -383,6 +383,7 @@ Every track defined in `containerIds` MUST be displayed/played/updated if presen
 ```
 
 #### Container
+
 A container is the box (most likely an HTML div element) in which a track's content is rendered.
 
 It must be stylable with <a href="https://developer.mozilla.org/en-US/docs/Web/CSS">CSS</a> by addressing it with `#<containerId>`. So its CSS ID MUST be same as it's containerId.
@@ -402,6 +403,7 @@ The value can be whatever data structure is required by the renderer. For all de
 Inside of the <a href="#style-object">style object</a> containerIds can also be found but MUST be referenced with a leading "#"
 
 ###### ContainerType / TrackType
+
 is the first half of a <a href="#containerId">containerId</a>, before the `_`.
 
 The containertype specifies a predefined type of media content that can be rendered/displayed/played within a <a href="#container">container</a>.
@@ -440,7 +442,49 @@ The default renderer that MUST be included in every OpenTheater client, MUST exp
 
 #### Styles Object
 
-<!--Continue here-->
+A style object is part of a <a href="#trigger-payload">trigger payload</a> and describes the changes to the styling of <a href="#container">containers</a>. 
+It lists the CSS styles as well as information about animation classes for all channels that SHOULD change immediately after receiving the parent trigger payload IF the client supports styling (RECOMMENDED)
+
+MUST list the changes as key-value pairs, where the key MUST be a valid `containerId` within this channels provisioning defintion, preceded by the "#" css id indicator. (**later versions of this spec will also include other css selectors than id**)
+
+MUST contain an object (`{}`) which CAN have the field `classes` containing an Array of css classes, defined in the client and/or CAN have the field `inline` containing a dictonary of key-value pairs of css instructions.
+
+MAY include the field `transitions`, which describes animations and other transitions inside of an <a href="#transitions-object">transitions object</a>.
+
+*Example:*
+```json
+"styles": {
+    "#text_de": {
+      "classes": [],
+      "inline": {
+        "backgroundColor": "yellow",
+        "border": "4px solid red"
+      },
+      "transitions": {
+        "fadeInClass": "animate__fadeIn",
+        "fadeInTime": 100,
+        "fadeInDelay": 100,
+        "fadeOutClass": "animate__fadeOut",
+        "fadeOutTime": 100,
+        "fadeOutDelay": 100
+      }
+  }
+}
+```
+
+##### Transitions Object
+
+A transitions object is an optional part of a <a href="#styles-object>styles object</a>, that defines animations and other transitions.
+
+All animations used in this spec and it's demo implementation so far were based on or inspired by <a href="https://github.com/animate-css/animate.css">animate.css library</a> and follow it's basic syntax of organizing animations into classes with a time indicator per animation.
+
+MAY include a field `fadeInClass` containing a string referencing ONE CSS animation, predefined in the renderer used. fadeInClass MUST be applied by the client's renderer to the new content.
+
+MAY include a field `fadeInTime` containing the time in milliseconds for the animation defined in fadeInClass. 
+
+MAY include a field `fadeOutClass` containing a string referencing ONE CSS animation, predefined in the renderer used. fadeOutClass MUST be applied by the client's renderer to the content that was displayed before this trigger-payload.
+
+MAY include a field `fadeOutTime` containing the time in milliseconds for the animation defined in fadeOutClass. 
 
 #### Renderer
 
