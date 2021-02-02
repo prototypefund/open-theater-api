@@ -350,13 +350,13 @@ Example:
 
     "image_de": "https://picsum.photos/300/300"
 
-  },
+  }
 ```
 
 
 #### Track
-A track is the representation of data inside of each field of a content object. It represents ONLY one medium being displayed/played/triggered within the renderer.
-It is usually identified via the `containerId` provided inside of the channel via the channels provisioning parameter <a href="#containerIds">`containerIds`</a> and - on the trigger API - inside of a <a href="#content-object">
+A track is the representation of data inside of each field of a content object. It represents ONLY one medium (see <a href="#containertype">containerType</a>) being displayed/played/triggered within the renderer.
+It is usually identified via the `containerId` provided inside of the channel via the channels provisioning parameter <a href="#channel">`containerIds`</a> and - on the trigger API - inside of a <a href="#content-object">
 
 One Channel MAY have several tracks in parallel. 
 
@@ -365,7 +365,7 @@ Every track defined in `containerIds` MUST be displayed/played/updated if presen
 *Example*:
 
 ```json
-"text_en":"this is english",
+"text_en":"this is english"
 ```
 
 #### Container
@@ -375,7 +375,7 @@ It must be stylable with <a href="https://developer.mozilla.org/en-US/docs/Web/C
 
 ##### ContainerId
 
-every containerId MUST be a string starting with the name of the renderer the change is affecting (<a href="#containertype">containerType</a>) and an underscore, followed by  a track/language name.
+Every containerId MUST be a string starting with the name of the renderer the change is affecting (<a href="#containertype">containerType</a>) and an underscore, followed by  a track/language name.
 
 The containerIds used inside of a <a href="trigger-payload">trigger payload</a> MUST be defined before in the provisioning's <a href="#channel">channel definitions</a>. 
 
@@ -385,7 +385,14 @@ The value can be whatever data structure is required by the renderer. For all de
 
 Inside of the <a href="#style-object">style object</a> containerIds can also be found but MUST be referenced with a leading "#"
 
+##### ContainerType
+The containertype specifies the predefined type of media content that can be displayed within a <a href="#container">container</a>.
 
+There are three default containertypes that MUST be included in every client:
+
+- text
+- audio
+- video
 
 #### Styles Object
 
