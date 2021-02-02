@@ -59,13 +59,14 @@ This way it can for example be ensured that clients first try local wifi network
 
 Example:
 ```json
+[
   { "ssid": "private.open.theater", 
     "pw": "testpassword1234",
     "serveruri": "http://192.168.178.38:8080/mockserver/example-repo/projectList.json"
-  }
+  },
   {
     "serveruri": "http://192.168.178.38:8080/mockserver/example-repo/projectList.json"
-  }
+  },
   {
     "serveruri": "https://www.open-theater.de/example-repo/projectList.json"
   }
@@ -87,11 +88,11 @@ If the client should connect to the same SERVERURI via another uplink in case th
 
 Example:
 ```json
-{ "ssid": "private.open.theater", 
-"pw": "testpassword1234",
-"serveruri": "http://192.168.178.38:8080/mockserver/example-repo/projectList.json"
+{ 
+  "ssid": "private.open.theater", 
+  "pw": "testpassword1234",
+  "serveruri": "http://192.168.178.38:8080/mockserver/example-repo/projectList.json"
 }
-
 ```
 
 #### Repository
@@ -353,9 +354,22 @@ Example:
   }
 ```
 
+#### ContentPreload Object
+
+A contentPreload Object is an optional part of a <a href="#trigger-payload">trigger payload</a>. (**ATTENTION: currently not yet implemented in the demo client**)
+
+It describes what content changes a client SHOULD expect within the next incoming trigger payloads.
+It instructs a client to preload media files - if possible - into its rendering context, to give the client the chance to limit loading/buffering delays on receiving the content trigger cue within a <a href="#content-object">content Object</a>.
+
+<!--Continue here-->
 
 #### Track
 A track is the representation of data inside of each field of a content object. It represents ONLY one medium (see <a href="#containertype">containerType</a>) being displayed/played/triggered within the renderer.
+
+A track is always composed from the key-value pair of 
+- a) <a href="#containerId-trackcontent">containerId</a>
+- b) <a href="#containerContent-trackcontent">containerContent</a>
+
 It is usually identified via the `containerId` provided inside of the channel via the channels provisioning parameter <a href="#channel">`containerIds`</a> and - on the trigger API - inside of a <a href="#content-object">
 
 One Channel MAY have several tracks in parallel. 
@@ -369,13 +383,15 @@ Every track defined in `containerIds` MUST be displayed/played/updated if presen
 ```
 
 #### Container
-A container is the box (most likely an HTML div element) in which a tracks content is rendered.
+A container is the box (most likely an HTML div element) in which a track's content is rendered.
 
 It must be stylable with <a href="https://developer.mozilla.org/en-US/docs/Web/CSS">CSS</a> by addressing it with `#<containerId>`. So its CSS ID MUST be same as it's containerId.
 
-##### ContainerId
+##### ContainerId / TrackId
 
-Every containerId MUST be a string starting with the name of the renderer the change is affecting (<a href="#containertype">containerType</a>) and an underscore, followed by  a track/language name.
+Every containerId MUST be a string starting with the name of the renderer the change is affecting (<a href="#containertype">containerType</a>) and an underscore, followed by  a track/language name. 
+
+Because the containerId being used inside code as key value of a <a href="#track">, it must be formatted 
 
 The containerIds used inside of a <a href="trigger-payload">trigger payload</a> MUST be defined before in the provisioning's <a href="#channel">channel definitions</a>. 
 
@@ -385,17 +401,52 @@ The value can be whatever data structure is required by the renderer. For all de
 
 Inside of the <a href="#style-object">style object</a> containerIds can also be found but MUST be referenced with a leading "#"
 
-##### ContainerType
-The containertype specifies the predefined type of media content that can be displayed within a <a href="#container">container</a>.
+###### ContainerType / TrackType
+is the first half of a <a href="#containerId">containerId</a>, before the `_`.
 
-There are three default containertypes that MUST be included in every client:
+The containertype specifies a predefined type of media content that can be rendered/displayed/played within a <a href="#container">container</a>.
 
-- text
-- audio
-- video
+It is specified as part of the <a href="#containerid">containerId</a> and MUST be the first part of the containerId string before the `_` as described in the spec for containerId.
+
+There are three default containertypes that MUST be included in every client's <a href="#default-renderer">default renderer</a>:
+
+- `text`
+- `audio`
+- `video`
+
+If a <a href="#trigger-payload">trigger payload</a> contains a <a href="#custom-renderer">custom renderer</a> in it's ContainerId, it MUST provide a complete custom renderer for download inside of it's <a href="#provisioning-endpoint>provisioning endpoint</a>. 
+
+But careful: Clients MAY ignore custom renderers all together. So it is RECOMMENDED to include alternative tracks if your project should be able to work across all OpenTheater compatible clients.
+
+###### ContainerContent
+
+is the content to be rendered into a <a href="#container">container</a>.
+
+MUST be a string. The format of the string, depends on the <a href="#containertype>containerType</a> and can change between default and custom renderers.
+
+The default renderer that MUST be included in every OpenTheater client, MUST expect containerContent formatted as follows:
+
+- `text`
+  - MUST contain a utf-8 string. 
+  - CAN include html line breaks (`<br/>`) for multiline content. 
+  - On change inside of <a href="#content-object">content</a>: The client MUST display the text as provided. The client SHOULD interpret html linebreaks as single line breaks.
+- `audio`
+  - MUST contain a URI string to a remote ressource (NOT RECOMMENDED) or a string path pointing to the provisioned audio content on a client's disk as defined in <a href="#file-definition">file path</a> (RECOMMENDED)
+  - On change inside of <a href="#content-object">content</a>: The client MUST play the audio file referenced. The client MAY show visualizations of audio if it's use case requires that.
+  - On change inside of <a href="#contentPreload-object">contentPreload</a>: The client SHOULD preload the audio file referenced to limit loading/buffering times on the expected cue.
+- `video`
+  - MUST contain a URI string to a remote ressource (NOT RECOMMENDED) or a string path pointing to the provisioned video content on a client's disk as defined in <a href="#file-definition">file path</a> (RECOMMENDED)
+  - On change inside of <a href="#contentPreload-object">contentPreload</a>: The client SHOULD preload the audio file referenced to limit loading/buffering times on the expected cue. The client MAY omit the preloading of the video Content to save ressources.
 
 #### Styles Object
 
+<!--Continue here-->
+
+#### Renderer
+
+##### default renderer
+
+##### custom renderer
 
 
 ### Trigger API Notes / Flow
