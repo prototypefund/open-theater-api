@@ -1,6 +1,10 @@
 # Open-Theater-API
 
-API based on socket.io and HTTP to send, provision & trigger live subtitles/translations for theater and live performance applications to mobile devices in the audience to bridge language barriers.
+Open Theater aims to give theaters and other event venues the possiblity to create a software environments in which visitors / theater audiences can use smartphones and other devices to receive personal subtitles and translations send live in the theater show.
+
+To achieve that Open Theater provides an API to send, provision & trigger live subtitles/translations for theater and live performance applications to mobile devices in the audience to bridge language barriers.
+
+On the other side Open Theater also provides a reference-implementations in form of <a href="https://gitlab.com/open-theater/open-theater-client-capacitorjs">a mobile App for ios and Android devices</a>, as well as a Desktop App sending subtitles and media cues to a trigger-server instance that will broadcast those cues to all registered mobile devices.
 
 Translations can be in form of text, video or audio snippets.
 
@@ -16,7 +20,7 @@ via:
 ```mermaid
 graph LR;
      ProvisioningServer[Provisioning Server<br>]
-     CueingProgram([Cueing Program])
+     CueingProgram([Cueing Software])
      Smartphone((Smartphone / Client))
      FileServer[(Media Files)]
 
@@ -25,7 +29,8 @@ graph LR;
     Smartphone-- connects -->TriggerServer;
     ProvisioningServer-->FileServer;
     FileServer-->ProvisioningServer;
-    ProvisioningServer---|download and <br> keep up-to-date|Smartphone;
+    ProvisioningServer--download-->Smartphone;
+    Smartphone--check for update-->ProvisioningServer;
 
 ```
 
@@ -49,6 +54,12 @@ This document currently is unfinished and not yet in a usable but in an experime
 
 <a href="https://tools.ietf.org/html/rfc2119">RF 2119</a> *is planned* to be used in the first published version of this document.
 
+
+## Underlyig technologies
+
+The API is based on socket.io and HTTP as transport protocols.
+
+HTTP GET Requests to serverendpoints are used to lead a client app through the provisioning process, which organized all media files needed 
 
 ## Agents of API processes
 
