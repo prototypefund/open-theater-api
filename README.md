@@ -13,6 +13,24 @@ The demo implementation for a mobile client and mockserver can be found at https
 via:
 <a href="https://www.prototypefund.de/">prototypefund.de</a>
 
+## Basic Flow
+
+```mermaid
+graph LR;
+     ProvisioningServer[Provisioning Server<br>]
+     CueingProgram([Cueing Program])
+     Smartphone((Smartphone / Client))
+     FileServer[(Media Files)]
+
+    CueingProgram-- sends subtitle -->TriggerServer;
+    TriggerServer-- send subtitles to many-->Smartphone;
+    Smartphone-- connects -->TriggerServer;
+    ProvisioningServer-->FileServer;
+    FileServer-->ProvisioningServer;
+    ProvisioningServer---|downloads and <br> keeps up-to-date|Smartphone;
+
+```
+
 ## Basic Structure
 
 The API proposals are split into 2 main sections:
