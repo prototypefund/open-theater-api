@@ -1,5 +1,3 @@
-[[_TOC_]]
-
 # Open-Theater-API
 
 API based on socket.io and HTTP to send, provision & trigger live subtitles/translations for theater and live performance applications to mobile devices in the audience to bridge language barriers.
@@ -23,11 +21,11 @@ graph LR;
      FileServer[(Media Files)]
 
     CueingProgram-- sends subtitle -->TriggerServer;
-    TriggerServer-- send subtitles to many-->Smartphone;
+    TriggerServer-- sends subtitles to many-->Smartphone;
     Smartphone-- connects -->TriggerServer;
     ProvisioningServer-->FileServer;
     FileServer-->ProvisioningServer;
-    ProvisioningServer---|downloads and <br> keeps up-to-date|Smartphone;
+    ProvisioningServer---|download and <br> keep up-to-date|Smartphone;
 
 ```
 
@@ -41,6 +39,10 @@ The API proposals are split into 2 main sections:
 In the future there might be additional APIs added. In discussion are (amongst others): 
 - Renderer Plugin API
 - optional Authentication/Ticketing API)
+
+## Table Of Content
+
+[[_TOC_]]
 
 ## Status of this document
 This document currently is unfinished and not yet in a usable but in an experimental state.
