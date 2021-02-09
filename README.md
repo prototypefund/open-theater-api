@@ -2,7 +2,7 @@
 
 # Open-Theater-API
 
-Open Theater aims to give theaters and other event venues the possiblity to create a software through which audiences can receive personal subtitles and translations on smartphones and other devices. Those contents can be send and received live and in synch with the live show running.
+Open Theater aims to give theaters and other event venues the possiblity to create a software through which audiences can receive personal **live subtitles**, **translations**, **audio descriptions** and **video** on smartphones and other devices. Those contents can be send and received live and in synch with the live show running.
 
 Open Theater's goal is to give a set of starting points to developers building translation applications for theaters and event spaces.
 
