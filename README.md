@@ -92,7 +92,6 @@ This document currently is unfinished and not yet in a usable but in an experime
 
 <a href="https://tools.ietf.org/html/rfc2119">RF 2119</a> *is planned* to be used in the first published version of this document.
 
-
 ## Underlyig technologies
 
 The API is based on socket.io and HTTP as transport protocols.
@@ -102,7 +101,7 @@ HTTP GET Requests to serverendpoints are used to lead a client app through the p
 ## Agents of API processes
 
 #### Client
-A client. Usually an application running on one single user's device (mobile phone, laptop etc.).
+A client. Usually an application running on one single user's device (mobile phone, laptop etc.). Usually contains of at least 2 User Interfaces: The Provisioning UI and the Trigger UI.
 
 #### Repository Server
 A server hosting an overview over several projects that MAY recide on different servers (provisioning servers and/or trigger servers).
@@ -113,9 +112,21 @@ A server hosting one or more project and channel specific provisioning endpoints
 #### Trigger Server
 A server hosting one or more project and/or channel specific trigger endpoints. Delivers real time trigger payloads to clients that are subscribed to its endpoints.
 
+#### Cueing Software
+Software that sends cues in the context of a live show. This can be a specialized subtitle software, the Open Theater demo desktop sender app or any software used by theater technicians and/or subtitle personell in a live show. It will need to either support sending Open Theater API or to translate it's own outgoing signals into Open Theater trigger payloads via an adapter app.
+
 ## Provisioning API
 
 status: test ready
+
+### Endpoints
+
+The provisioning API functions based on HTTP GET endpoints that all can be reached by clients.
+It is planned to expanded by open-api v3 spec files in the future.
+
+- Repository Server Endpoint: `<Repository URI or IP>/projectList.json` references then projectspecific trigger API endpoints as well as
+- several channel specific Provisioning Endpoints: `<FileServer>/fileList.json`
+- as well as all the files listed in the above.
 
 ### Terminology
 
