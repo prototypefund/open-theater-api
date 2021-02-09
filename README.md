@@ -1,14 +1,19 @@
 # Open-Theater-API
 
-Open Theater aims to give theaters and other event venues the possiblity to create a software environments in which visitors / theater audiences can use smartphones and other devices to receive personal subtitles and translations send live in the theater show.
+Open Theater aims to give theaters and other event venues the possiblity to create a software through which audiences can receive personal subtitles and translations on smartphones and other devices. Those contents can be send and received live and in synch with the live show running.
 
-To achieve that Open Theater provides an API to send, provision & trigger live subtitles/translations for theater and live performance applications to mobile devices in the audience to bridge language barriers.
+Open Theater's goal is to give a set of starting points to developers building translation applications for theaters and event spaces.
 
-On the other side Open Theater also provides a reference-implementations in form of <a href="https://gitlab.com/open-theater/open-theater-client-capacitorjs">a mobile App for ios and Android devices</a>, as well as a Desktop App sending subtitles and media cues to a trigger-server instance that will broadcast those cues to all registered mobile devices.
+Translations can be in form of text, video or audio snippets. Text can be directly delivered from a subtitle cueing software. Video and audio data have to be downloaded ("provisioned") by user devices before the show starts in order to be played/displayed on time in a live show.
 
-Translations can be in form of text, video or audio snippets.
+To achieve that, Open Theater defines
+1. an API to send, provision & trigger live subtitles/translations. (Documented in this very repository).
 
-The demo implementation for a mobile client and mockserver can be found at https://gitlab.com/open-theater/open-theater-client-capacitorjs
+Open Theater also provides **reference implementations** in form of 
+
+2. <a href="https://gitlab.com/open-theater/open-theater-client-capacitorjs">a mobile App for ios and Android devices</a>, as well as 
+3. a Desktop App sending subtitles and media cues to
+4. a trigger server instance that will broadcast those cues to all registered mobile devices.
 
 <a href="https://www.bmbf.de/"><img src="https://prototypefund.de/wp-content/uploads/2016/07/logo-bmbf.svg"></a>
 
@@ -16,6 +21,12 @@ via:
 <a href="https://www.prototypefund.de/">prototypefund.de</a>
 
 ## Basic Flow
+
+The following flow documents a *abstracted* view of the communication between the 4 main actors of the API flow: 
+- Smartphones / Clients (user devices receiving media files and subtitles)
+- Provisioning Server (in reality more than one server and divided into repositories and provisioning server but here summarized)
+- Cueing Software (apps that send subtitle or other cues in a live show)
+- Trigger Server
 
 ```mermaid
 graph LR;
@@ -31,7 +42,6 @@ graph LR;
     FileServer-->ProvisioningServer;
     ProvisioningServer--download-->Smartphone;
     Smartphone--check for update-->ProvisioningServer;
-
 ```
 
 ## Basic Structure
@@ -395,7 +405,7 @@ It instructs a client to preload media files - if possible - into its rendering 
 <!--Continue here-->
 
 #### Track
-A track is the representation of data inside of each field of a content object. It represents ONLY one medium (see <a href="#containertype">containerType</a>) being displayed/played/triggered within the renderer.
+A track is the representation of data **inside of each field of a content object**. It represents ONLY one medium (see <a href="#containertype">containerType</a>) being displayed/played/triggered within the renderer.
 
 A track is always composed from the key-value pair of 
 - a) <a href="#containerId-trackcontent">containerId</a>
@@ -451,7 +461,7 @@ If a <a href="#trigger-payload">trigger payload</a> contains a <a href="#custom-
 
 But careful: Clients MAY ignore custom renderers all together. So it is RECOMMENDED to include alternative tracks if your project should be able to work across all OpenTheater compatible clients.
 
-###### ContainerContent
+###### Container Content
 
 is the content to be rendered into a <a href="#container">container</a>.
 
@@ -519,10 +529,31 @@ MAY include a field `fadeOutTime` containing the time in milliseconds for the an
 
 #### Renderer
 
+A renderer defines HOW a trigger payload and it's references media are displayed/played inside of the trigger UI of a client app.
+
+Which renderer to be used is defined for each channel inside of <a href="#containerid-trackid">container id</a>'s first keyword in the Trigger API and in the Provisioning API's <a href="#channel">channel definition</a>. 
+
+It is strongly RECOMMENDED to always provide channels that only use <a href="#default-renderer">default renderers</a> and provide channels utilizing <a href="#custom-renderer">custom renderers</a> only in addition. Otherwise the interoperability between different client apps will be compromised. 
+
+**For example:** *If a user has installed the OpenTheater client app for the "MilkShakesBear theater" but comes to the "Shakespear Theater" that provides only channels serving to clients with custom renderers, they will not be able to receive any subtitles unless their app happens to also have implemented the custom renderers MilkShakesBear Theater uses. Although their app could connect to all the Open Theater Infrastructure inside of the Shakespear Theater*
+
+To see an example of how to implement renderers, take a look at `/src/trigger_client.js` and `www/assets/` inside of the <a href="https://gitlab.com/open-theater/open-theater-client-capacitorjs">Open Theater Demo Client App</a>.
+
 ##### default renderer
+
+OpenTheater API requires at least 3 default renderes to be shipped with every client, to be compatible with the default <a href="#container-content">container contents</a>
+
+They MUST display/play the contents as described in the container contents definition.
+
+Client vendors MAY add variations within those defined bounds to the user interface and displaying. They MAY choose, for example, font types, frames, play/pause controls etc.
 
 ##### custom renderer
 
+**(status: pre-alpha)**
+
+Custom renderers CAN be delivered in addition to the default renderers, to add different views and/or additional  <a href="#containertype-tracktype">container contents types</a>.
+
+They CAN be shipped with a client, but MUST be always accompanied with the <a href="#default-renderer">default renderers</a>. In future versions of this API they MIGHT also be delivered to clients via the provisioning API through a HTML/CSS plugin. But that is not yet implemented.
 
 ### Trigger API Notes / Flow
 
