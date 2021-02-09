@@ -1,3 +1,5 @@
+<a href="#table-of-content">Jump to: Table of Contents</a>
+
 # Open-Theater-API
 
 Open Theater aims to give theaters and other event venues the possiblity to create a software through which audiences can receive personal subtitles and translations on smartphones and other devices. Those contents can be send and received live and in synch with the live show running.
@@ -7,7 +9,7 @@ Open Theater's goal is to give a set of starting points to developers building t
 Translations can be in form of text, video or audio snippets. Text can be directly delivered from a subtitle cueing software. Video and audio data have to be downloaded ("provisioned") by user devices before the show starts in order to be played/displayed on time in a live show.
 
 To achieve that, Open Theater defines
-1. an API to send, provision & trigger live subtitles/translations. (Documented in this very repository).
+1. an <a href="#table-of-content">API</a> to send, provision & trigger live subtitles/translations. (<a href="#table-of-content">Documented in this very repository</a>).
 
 Open Theater also provides **reference implementations** in form of 
 
@@ -62,18 +64,22 @@ This repository is for developers, building software for theaters and event venu
 It is also for software architects who want to contribute to this prototypical API spec by criticising, making proposals for features and working with us on future iterations of this API.
 
 If you want to just build your own Open Theater compatible mobile App, you 
-a) can check out our <a href="https://gitlab.com/open-theater/open-theater-client-capacitorjs">demo mobile app for iOs and Android devices</a> and modify it to your liking.
-b) You will also have to setup a server serving a repository (minimum: a projectList.json file),
-c) a provisioning server (minumum: serving fileList.json files for each channel and the corresponding media files, if any are needed)
-d) a trigger server (see our minimal demo implementaion)
-e) and at last a Cueing Software that sends Open Theater trigger payloads (minimum: see our minimal desktop sender and adapter app, maximum: build your own adapter app from the Cueing Software of your choice)
+
+- a) can check out our <a href="https://gitlab.com/open-theater/open-theater-client-capacitorjs">demo mobile app for iOs and Android devices</a> and modify it to your liking.
+- b) You will also have to setup a server serving a repository (minimum: a projectList.json file),
+- c) a provisioning server (minumum: serving fileList.json files for each channel and the corresponding media files, if any are needed)
+- d) a trigger server (see our minimal demo implementaion)
+- e) and at last a Cueing Software that sends Open Theater trigger payloads (minimum: see our minimal desktop sender and adapter app, maximum: build your own adapter app from the Cueing Software of your choice)
 
 Sounds like a lot?:
 
 a) includes already everything for b) and c) inside of `www/mockserver/`(you only need to serve it on the network).
+
 d) and e) are our already working minimal setups you can install right away to get started.
 
+
 Open Theater is a prototype, so you will probably have questions early on. Please feel free, to write us tickets to raise issues and ask for features and explanations and/or contact us at <a href="mailto:mail@open-theater.de">mail@open-theater.de</a>
+
 
 We hope to also provide adapter apps to send cues/subtitles from several common stage cueing apps in the future. But we will need your help to develop and find those.
 
