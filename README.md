@@ -14,8 +14,8 @@ To achieve that, Open Theater defines
 Open Theater also provides **reference implementations** in form of 
 
 2. <a href="https://gitlab.com/open-theater/open-theater-client-capacitorjs">a mobile App for ios and Android devices</a>, as well as 
-3. a Desktop App sending subtitles and media cues to
-4. a trigger server instance that will broadcast those cues to all registered mobile devices.
+3. a Desktop App sending subtitles and media cues to (**todo: link public**)
+4. a <a href="https://gitlab.com/open-theater/open-theater-trigger-server-demo">trigger server</a> instance that will broadcast those cues to all registered mobile devices.
 
 <a href="https://www.bmbf.de/"><img src="https://prototypefund.de/wp-content/uploads/2016/07/logo-bmbf.svg"></a>
 
