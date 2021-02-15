@@ -122,6 +122,44 @@ Software that sends cues in the context of a live show. This can be a specialize
 
 status: test ready
 
+### Basic Flow Provisioning API
+
+```mermaid
+graph BT;
+    Client1([Client])
+    Client2([Client])
+    Client3([Client])
+    Client4([Client])
+    projectList.json[(projectList.json)]
+    fileList.json[(fileList.json<br>on<br>ProvisioningServer)]
+    MediaFiles[(mediaFiles <br>on<br>ProvisioningServer)]
+    CachedFiles[(chachedFiles<br>on<br>Client)]
+
+    subgraph Step 5
+        MediaFiles-- download -->Client4;
+    end
+
+
+    subgraph STEP 4
+        Client-- compares --- CachedFiles;
+        Client-- compares --- fileList.json;
+    end
+
+    subgraph STEP 3
+        Client3-- connects -->ProvisioningServer;
+        ProvisioningServer-- fileList.json-->Client3;
+    end
+
+    subgraph STEP 2
+        Client2-- pick project <br> and channel <br>-->projectList.json
+    end
+
+    subgraph STEP 1
+        Client1-- connects  --> RepositoryServer;
+        RepositoryServer-- projectList.json-->Client1;
+    end
+
+```
 
 
 ### Endpoints
