@@ -98,16 +98,19 @@ The API is based on socket.io and HTTP as transport protocols.
 
 HTTP GET Requests to serverendpoints are used to lead a client app through the provisioning process, which organized all media files needed 
 
-## Agents of API processes
+## Agents / Actors of API processes
 
 #### Client
 A client. Usually an application running on one single user's device (mobile phone, laptop etc.). Usually contains of at least 2 User Interfaces: The Provisioning UI and the Trigger UI.
 
 #### Repository Server
 A server hosting an overview over several projects that MAY recide on different servers (provisioning servers and/or trigger servers).
+The repository server and the provisioning servers make up the provisioning backend. 
+
+The repository is it's own server, so many theaters and event venues can host their data decentralized on different servers. The repositories work like a direction sign to all the pieces and theaters that have been listed inside of a given repository.
 
 #### Provisioning Server
-A server hosting one or more project and channel specific provisioning endpoints and/or their fileLists and/or their associated asset files to be downloaded and chached by clients in the provisioning process.
+The provisioning server hosts all files that need to be downloaded and chached by clients in the provisioning process. The data is organized by <a href="#project">project</a> and it's <a href="#channel">channels</a>.
 
 #### Trigger Server
 A server hosting one or more project and/or channel specific trigger endpoints. Delivers real time trigger payloads to clients that are subscribed to its endpoints.
@@ -118,6 +121,8 @@ Software that sends cues in the context of a live show. This can be a specialize
 ## Provisioning API
 
 status: test ready
+
+
 
 ### Endpoints
 
