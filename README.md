@@ -46,6 +46,8 @@ graph LR;
     Smartphone--check for update-->ProvisioningServer;
 ```
 
+a more technically detailed description can be found at <a href="#data-flow-of-provisioning-process">Data Flow of Provisioning Process</a>. 
+
 ## Basic Structure
 
 The API proposals are split into 2 main sections:
