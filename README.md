@@ -94,7 +94,7 @@ This document currently is unfinished and not yet in a usable but in an experime
 
 <a href="https://tools.ietf.org/html/rfc2119">RF 2119</a> *is planned* to be used in the first published version of this document.
 
-## Underlyig technologies
+## Underlying technologies
 
 The API is based on socket.io and HTTP as transport protocols.
 
@@ -541,7 +541,7 @@ There are three default containertypes that MUST be included in every client's <
 - `audio`
 - `video`
 
-If a <a href="#trigger-payload">trigger payload</a> contains a <a href="#custom-renderer">custom renderer</a> in it's ContainerId, it MUST provide a complete custom renderer for download inside of it's <a href="#provisioning-endpoint>provisioning endpoint</a>. 
+If a <a href="#trigger-payload">trigger payload</a> contains a <a href="#custom-renderer">custom renderer</a> in it's ContainerId, it MUST provide a complete custom renderer for download inside of it's <a href="#provisioning-endpoint">provisioning endpoint</a>. 
 
 But careful: Clients MAY ignore custom renderers all together. So it is RECOMMENDED to include alternative tracks if your project should be able to work across all OpenTheater compatible clients.
 
